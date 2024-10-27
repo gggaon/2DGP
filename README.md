@@ -14,15 +14,15 @@
 
 2. 예상 게임 실행 흐름
    - 게임은 메인화면, 스테이지설정, 본게임으로 이루어져 있다
-     <img width="530" alt="2 2dgp" src="https://github.com/user-attachments/assets/113fe772-4475-4f19-bc51-cda3f41bdec9">
+   <img width="530" alt="2 2dgp" src="https://github.com/user-attachments/assets/113fe772-4475-4f19-bc51-cda3f41bdec9">
    - 메인화면에서 게임시작을 누르면 스테이지설정에서 플레이할 스테이지를 선택한다.
-     <img width="530" alt="3 2dgp" src="https://github.com/user-attachments/assets/cacbd226-85e7-422f-9eb9-d58ccc4375d9">
+   <img width="530" alt="3 2dgp" src="https://github.com/user-attachments/assets/cacbd226-85e7-422f-9eb9-d58ccc4375d9">
    - 스테이지를 선택하면 본게임에 들어가게 되고 그 스테이지의 맵과 현재 상황에 대해 설명하는 티노가 등장한다.
-   - <img width="530" alt="5 2dgp" src="https://github.com/user-attachments/assets/2ef3a701-2a59-4aa9-afd1-a61c991cb54d">
+   <img width="530" alt="5 2dgp" src="https://github.com/user-attachments/assets/2ef3a701-2a59-4aa9-afd1-a61c991cb54d">
    - 티노를 조작해 장애물을 피하고 결승점에 도달하면 무사히 학교 도착이라는 명칭과 함께 그 스테이지를 클리어한다.
-     <img width="530" alt="6 2dgp" src="https://github.com/user-attachments/assets/da054a24-7c25-4729-a401-d1dd1d2c05b4">
+   <img width="530" alt="6 2dgp" src="https://github.com/user-attachments/assets/da054a24-7c25-4729-a401-d1dd1d2c05b4">
    - 다시 스테이지설정으로 넘어가며 플레이한 해당 스테이지는 클리어되었다는 표시가 뜨고 다음 스테이지가 열리게 된다.
-     <img width="530" alt="4 2dgp" src="https://github.com/user-attachments/assets/a1c8e5b9-d2eb-42ea-b5bf-5fc7cdc61a77">
+   <img width="530" alt="4 2dgp" src="https://github.com/user-attachments/assets/a1c8e5b9-d2eb-42ea-b5bf-5fc7cdc61a77">
     
 3. 개발 내용
   - Scene 의 종류 및 구성, 전환 규칙
