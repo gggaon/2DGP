@@ -92,3 +92,7 @@ Pygame 장단점(11월 9일 추가)
 6. 구현하면서 어려운 부분, 수업에서 추가로 다루었으면 하는 부분에 대한 언급 (최종 발표때까지 수정 가능)
   
 7. 수업 진행 방식에 대한 제안 (최종 발표때까지 수정 가능)
+
+#기타
+고양이 마리오 BGM 유튜브 사이트
+https://www.youtube.com/playlist?list=PLOIlehl1iAoVCYB3dZ9Q6hybotCJC4Hnz
