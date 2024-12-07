@@ -93,8 +93,11 @@ scene_2_block1_velocity_y = 0.5
 transparent_block_rect = pygame.Rect(700, 350, ground_width, ground_height)
 transparent_block_visible = False 
 
-finish_rect = finish_image.get_rect()
-finish_rect.topleft = (500, ground_y_position - 150)
+scene_3_finish_rect = finish_image.get_rect()
+scene_3_finish_rect.topleft = (500, ground_y_position - 150)
+
+scene_4_finish_rect = finish_image.get_rect()
+scene_4_finish_rect.topleft = (430, ground_y_position - ground_height - 220)
 
 scene_4_block1_rect = pygame.Rect(400, ground_y_position - ground_height - 70, ground_width, ground_height)
 
@@ -314,6 +317,7 @@ def draw_game_scene():
         screen.blit(stage1_background_image, (0, 0))
     elif scene in ["scene_4", "scene_5", "scene_6"]:
         screen.blit(stage2_background_image, (0, 0))
+
     if moving:
         current_tino_image = tino_image if facing_left else tino_image_flipped
     else:
@@ -334,15 +338,19 @@ def draw_game_scene():
     elif scene == "scene_3":
         for block in scene_3_ground_blocks:
             screen.blit(ground_image, block.topleft)
-
         if transparent_block_visible:
             screen.blit(ground_image, transparent_block_rect.topleft)
-        finish_rect.y = max(100, min(ground_y_position - 150, ground_y_position - 150 - tino_x // 2))
-        screen.blit(finish_image, finish_rect.topleft)
+        scene_3_finish_rect.y = max(100, min(ground_y_position - 150, ground_y_position - 150 - tino_x // 2))
+        screen.blit(finish_image, scene_3_finish_rect.topleft)
     elif scene == "scene_4":
         for block in scene_4_ground_blocks:
             screen.blit(ground_image, block.topleft)
         screen.blit(ground_image, scene_4_block1_rect.topleft)
+
+        scene_4_finish_rect.x = 330 + tino_x
+        if scene_4_finish_rect.x >= 560 :
+            scene_4_finish_rect.y = ground_y_position - 150
+        screen.blit(finish_image, scene_4_finish_rect.topleft)
     elif scene == "scene_5":
         for block in scene_5_ground_blocks:
             screen.blit(ground_image, block.topleft)
@@ -388,7 +396,7 @@ def check_finish():
     global scene, message_active, stage_buttons, player_lives
     tino_rect = pygame.Rect(tino_x, tino_y, 50, 50)
 
-    if scene == "scene_3" and tino_rect.colliderect(finish_rect):
+    if scene == "scene_3" and tino_rect.colliderect(scene_3_finish_rect):
         message_active = True
 
     keys = pygame.key.get_pressed()
