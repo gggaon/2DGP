@@ -17,6 +17,9 @@ stage1_background_image = pygame.transform.scale(stage1_background_image, (800, 
 stage2_background_image = pygame.image.load('map2.png').convert()
 stage2_background_image = pygame.transform.scale(stage2_background_image, (800, 600))
 
+stage3_background_image = pygame.image.load('map3.png').convert()
+stage3_background_image = pygame.transform.scale(stage3_background_image, (800, 600))
+
 lobby_background_image = pygame.image.load('lobby.png').convert()
 lobby_background_image = pygame.transform.scale(lobby_background_image, (800, 600))
 
@@ -44,6 +47,11 @@ stand_image_flipped = pygame.transform.flip(stand_image, True, False)
 
 ground_image = pygame.image.load('ground.png').convert_alpha()
 ground_width, ground_height = ground_image.get_size()
+
+original_block_image = pygame.image.load('ground.png').convert_alpha()
+
+scene_8_block1_image = original_block_image.subsurface(pygame.Rect(0, 0, 50, ground_height))
+scene_8_block1_image = pygame.transform.scale(scene_8_block1_image, (50, ground_height))
 
 monster_image = pygame.image.load('mush.png').convert()
 monster_image.set_colorkey((0, 0, 0))  
@@ -81,6 +89,21 @@ scene_6_ground_blocks = [
     for x in range(0, 800, ground_width) if not (150 <= x < 500)
 ]
 
+scene_7_ground_blocks = [
+    pygame.Rect(x, ground_y_position, ground_width, ground_height)
+    for x in range(0, 800, ground_width) if not (400 <= x < 500)
+]
+
+scene_8_ground_blocks = [
+    pygame.Rect(x, ground_y_position, ground_width, ground_height)
+    for x in range(0, 800, ground_width) if not (50 <= x < 550)
+]
+
+scene_9_ground_blocks = [
+    pygame.Rect(x, ground_y_position, ground_width, ground_height)
+    for x in range(0, 800, ground_width) 
+]
+
 scene_1_block1_rect = pygame.Rect(200, ground_y_position - ground_height - 70, ground_width, ground_height)
 scene_1_block2_rect = pygame.Rect(500, ground_y_position - ground_height - 70, ground_width, ground_height)
 
@@ -105,6 +128,10 @@ scene_6_finish_rect.topleft = (600, ground_y_position - 150)
 scene_4_block1_rect = pygame.Rect(400, ground_y_position - ground_height - 70, ground_width, ground_height)
 
 scene_5_block1_rect = pygame.Rect(300, ground_y_position - ground_height - 70, ground_width, ground_height)
+
+scene_8_block1_rect = pygame.Rect(100, ground_y_position - ground_height - 70, 50, ground_height)
+scene_8_block2_rect = pygame.Rect(250, ground_y_position - ground_height - 70, 50, ground_height)
+scene_8_block3_rect = pygame.Rect(400, ground_y_position - ground_height - 70, 50, ground_height)
 
 stage_buttons = [
     {"label": "1", "rect": pygame.Rect(250, 200, 100, 50), "enabled": True, "clear": False},
@@ -190,11 +217,11 @@ def handle_stage_click(pos):
                     elif stage_buttons[1]["clear"] == False:
                         reset_instage2()
                 elif button["label"] == "3":
-                    scene = "scene_4"
+                    scene = "scene_7"
                     if stage_buttons[2]["clear"] == True:
-                        reset_outstage2()
+                        reset_outstage3()
                     elif stage_buttons[2]["clear"] == False:
-                        reset_instage2()
+                        reset_instage3()
             else:
                 stage_message_active = True
 
@@ -246,6 +273,24 @@ def reset_outstage2():
     player_lives = 3
     scene = "scene_4"
 
+def reset_instage3():
+    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives
+    tino_x, tino_y = 50, ground_y_position - 50  
+    tino_velocity_y = 0
+    on_ground = True  
+    facing_left = False
+    player_lives -= 1
+    scene = "scene_7"
+
+def reset_outstage3():
+    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives
+    tino_x, tino_y = 50, ground_y_position - 50  
+    tino_velocity_y = 0
+    on_ground = True  
+    facing_left = False
+    player_lives = 3
+    scene = "scene_7"
+
 def check_falling_into_hole():
     global player_lives, scene
     tino_rect = pygame.Rect(tino_x, tino_y, 50, 50)
@@ -277,14 +322,29 @@ def check_falling_into_hole():
                 break
         if tino_rect.colliderect(scene_5_block1_rect):
             is_in_hole = False
+    elif scene == "scene_7":
+        for block in scene_7_ground_blocks:
+            if tino_rect.colliderect(block):
+                is_in_hole = False
+                break
+    elif scene == "scene_8":
+        for block in scene_8_ground_blocks:
+            if tino_rect.colliderect(block):
+                is_in_hole = False
+                break
+        if tino_rect.colliderect(scene_8_block1_rect) or tino_rect.colliderect(scene_8_block2_rect) or tino_rect.colliderect(scene_8_block3_rect):
+            is_in_hole = False
 
     if is_in_hole and tino_y > ground_y_position:
         if scene in ["scene_1", "scene_2", "scene_3"]:
-         scene = "scene_1"
-         reset_instage1()
+            scene = "scene_1"
+            reset_instage1()
         if scene in ["scene_4", "scene_5"]:
             scene = "scene_4"
             reset_instage2()
+        if scene in ["scene_7", "scene_8"]:
+            scene = "scene_7"
+            reset_instage3()
 
 def draw_lobby():
     screen.blit(lobby_background_image, (0, 0))
@@ -293,7 +353,6 @@ def draw_lobby():
     if pygame.time.get_ticks() % 1000 < 500:  
         press_enter_text = large_font.render("Press Enter", True, (255, 255, 255))
         screen.blit(press_enter_text, ((800 - press_enter_text.get_width()) // 2, 500))
-
 
 def draw_message_box(message):
     box_width, box_height = 500, 250
@@ -325,6 +384,8 @@ def draw_game_scene():
         screen.blit(stage1_background_image, (0, 0))
     elif scene in ["scene_4", "scene_5", "scene_6"]:
         screen.blit(stage2_background_image, (0, 0))
+    elif scene in ["scene_7", "scene_8", "scene_9"]:
+        screen.blit(stage3_background_image, (0, 0))
 
     if moving:
         current_tino_image = tino_image if facing_left else tino_image_flipped
@@ -367,6 +428,19 @@ def draw_game_scene():
         for block in scene_6_ground_blocks:
             screen.blit(ground_image, block.topleft)
             screen.blit(finish_image, scene_6_finish_rect.topleft)
+    elif scene == "scene_7":
+        for block in scene_7_ground_blocks:
+            screen.blit(ground_image, block.topleft)
+    elif scene == "scene_8":
+        for block in scene_8_ground_blocks:
+            screen.blit(ground_image, block.topleft)
+
+        screen.blit(scene_8_block1_image, scene_8_block1_rect.topleft)
+        screen.blit(scene_8_block1_image, scene_8_block2_rect.topleft)
+        screen.blit(scene_8_block1_image, scene_8_block3_rect.topleft)
+    elif scene == "scene_9":
+        for block in scene_9_ground_blocks:
+            screen.blit(ground_image, block.topleft)
 
     if triangle_falling:
         triangle_points = [
@@ -411,6 +485,9 @@ def check_finish():
     if scene == "scene_6" and tino_rect.colliderect(scene_6_finish_rect):
         message_active = True
 
+    #if scene == "scene_9" and tino_rect.colliderect(scene_9_finish_rect):
+    #    message_active = True
+
     keys = pygame.key.get_pressed()
     if message_active and keys[pygame.K_RETURN]:
         if scene == "scene_3":
@@ -420,6 +497,9 @@ def check_finish():
         if scene == "scene_6":
             stage_buttons[1]["clear"] = True  
             stage_buttons[2]["enabled"] = True  
+
+        if scene == "scene_9":
+            stage_buttons[2]["clear"] = True  
 
         scene = "stage"  
         message_active = False
@@ -472,6 +552,12 @@ def handle_collisions():
         blocks = scene_5_ground_blocks + [scene_5_block1_rect]
     elif scene == "scene_6":
         blocks = scene_6_ground_blocks
+    elif scene == "scene_7":
+        blocks = scene_7_ground_blocks
+    elif scene == "scene_8":
+        blocks = scene_8_ground_blocks + [scene_8_block1_rect] + [scene_8_block2_rect] + [scene_8_block3_rect]
+    elif scene == "scene_9":
+        blocks = scene_9_ground_blocks
 
     for block in blocks:
         if tino_rect.colliderect(block) and tino_velocity_y > 0:
@@ -491,6 +577,10 @@ def handle_collisions():
             scene = "scene_5"
         elif scene == "scene_5":
             scene = "scene_6"
+        elif scene == "scene_7":
+            scene = "scene_8"
+        elif scene == "scene_8":
+            scene = "scene_9"
         tino_x = 0
 
 def handle_triangle():
@@ -550,6 +640,10 @@ while running:
         if current_music != stage2_music:
             play_music(stage2_music)
             current_music = stage2_music
+    elif scene in ["scene_7", "scene_8", "scene_9"]:
+        if current_music != stage3_music:
+            play_music(stage3_music)
+            current_music = stage3_music
 
     if scene == "main_menu":
         draw_lobby()
@@ -586,6 +680,15 @@ while running:
          tino_velocity_y = 0
         draw_game_scene()
         check_finish()
+    elif scene in ["scene_7", "scene_8", "scene_9"]:
+        if not message_active:  
+            handle_keys()
+            tino_velocity_y += gravity
+            tino_y += tino_velocity_y
+            handle_collisions()
+            check_falling_into_hole()
+            check_finish()  
+            draw_game_scene()
 
     pygame.display.flip()
 
