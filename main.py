@@ -140,36 +140,34 @@ def play_music(file, loop=-1):
     pygame.mixer.music.play(loop) 
 
 def draw_stage():
-    screen.blit(stage_background_image, (0, 0))  
-
-    mouse_pos = pygame.mouse.get_pos()  
+    screen.blit(stage_background_image, (0, 0))
+    mouse_pos = pygame.mouse.get_pos()
+    
     for button in stage_buttons:
-        if button["rect"].collidepoint(mouse_pos):
-            if button["enabled"]:
-                color = (0, 200, 0) 
-            else:
-                color = (120, 120, 120)  
+        label = button["label"]
+        rect = button["rect"]
+        enabled = button["enabled"]
+        
+        if rect.collidepoint(mouse_pos):
+            color = (0, 200, 0) if enabled else (100, 100, 100)
         else:
-            if button["enabled"]:
-                color = (0, 255, 0)  
-            else:
-                color = (150, 150, 150)  
+            color = (0, 255, 0) if enabled else (150, 150, 150)
 
-        pygame.draw.rect(screen, color, button["rect"])  
-        pygame.draw.rect(screen, (0, 0, 0), button["rect"], 3)  
+        pygame.draw.rect(screen, color, rect, border_radius=10)
+        pygame.draw.rect(screen, (0, 0, 0), rect, 3, border_radius=10)
 
-        label = button_font.render(button["label"], True, (0, 0, 0))
-        label_x = button["rect"].x + (button["rect"].width - label.get_width()) // 2
-        label_y = button["rect"].y + (button["rect"].height - label.get_height()) // 2
-        screen.blit(label, (label_x, label_y))
+        label_text = button_font.render(label, True, (0, 0, 0))
+        screen.blit(label_text, (
+            rect.x + (rect.width - label_text.get_width()) // 2, 
+            rect.y + (rect.height - label_text.get_height()) // 2)
+        )
 
-        if button.get("clear", False):
-            clear_text = button_font.render("Clear", True, (0, 0, 0))
-            screen.blit(clear_text, (button["rect"].x + 30, button["rect"].y + 60))
+        if button["clear"]:
+            clear_text = button_font.render("CLEAR", True, (0, 0, 0))
+            screen.blit(clear_text, (rect.x + 15, rect.y + 60))
 
     if stage_message_active:
         draw_message_box("This stage is locked!")
-
 
 def handle_stage_click(pos):
     global scene, stage_message_active
@@ -281,31 +279,32 @@ def check_falling_into_hole():
 
 def draw_lobby():
     screen.blit(lobby_background_image, (0, 0))
+
     large_font = pygame.font.SysFont("Comic Sans MS", 48)
-    press_enter_text = large_font.render("Press Enter", True, (255, 255, 255))  
-    text_x = (800 - press_enter_text.get_width()) // 2  
-    text_y = 540
-    screen.blit(press_enter_text, (text_x, text_y))
+    if pygame.time.get_ticks() % 1000 < 500:  
+        press_enter_text = large_font.render("Press Enter", True, (255, 255, 255))
+        screen.blit(press_enter_text, ((800 - press_enter_text.get_width()) // 2, 500))
+
 
 def draw_message_box(message):
-    box_width, box_height = 400, 200
+    box_width, box_height = 500, 250
     box_x = (800 - box_width) // 2
     box_y = (600 - box_height) // 2
 
-    pygame.draw.rect(screen, (255, 255, 255), (box_x, box_y, box_width, box_height)) 
-    pygame.draw.rect(screen, (0, 0, 0), (box_x, box_y, box_width, box_height), 3)  
+    pygame.draw.rect(screen, (0, 0, 0), (box_x, box_y, box_width, box_height))
+    pygame.draw.rect(screen, (255, 255, 255), (box_x+5, box_y+5, box_width-10, box_height-10), 5)
 
     message_lines = message.split('\n')
-    font = pygame.font.SysFont("Arial", 24)
+    message_font = pygame.font.SysFont("Arial", 28, bold=True)
     for i, line in enumerate(message_lines):
-        text_surface = font.render(line, True, (0, 0, 0))  
+        text_surface = message_font.render(line, True, (255, 255, 255))
         text_x = box_x + (box_width - text_surface.get_width()) // 2
-        text_y = box_y + 40 + i * 30
+        text_y = box_y + 60 + i * 40
         screen.blit(text_surface, (text_x, text_y))
 
-    continue_text = font.render("Press Enter to continue", True, (0, 0, 0))
+    continue_text = message_font.render("Press Enter to continue", True, (200, 200, 200))
     continue_x = box_x + (box_width - continue_text.get_width()) // 2
-    continue_y = box_y + box_height - 40
+    continue_y = box_y + box_height - 60
     screen.blit(continue_text, (continue_x, continue_y))
 
 def draw_tino_position():
