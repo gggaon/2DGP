@@ -99,6 +99,9 @@ scene_3_finish_rect.topleft = (500, ground_y_position - 150)
 scene_4_finish_rect = finish_image.get_rect()
 scene_4_finish_rect.topleft = (430, ground_y_position - ground_height - 220)
 
+scene_6_finish_rect = finish_image.get_rect()
+scene_6_finish_rect.topleft = (600, ground_y_position - 150)
+
 scene_4_block1_rect = pygame.Rect(400, ground_y_position - ground_height - 70, ground_width, ground_height)
 
 scene_5_block1_rect = pygame.Rect(300, ground_y_position - ground_height - 70, ground_width, ground_height)
@@ -185,6 +188,12 @@ def handle_stage_click(pos):
                     if stage_buttons[1]["clear"] == True:
                         reset_outstage2()
                     elif stage_buttons[1]["clear"] == False:
+                        reset_instage2()
+                elif button["label"] == "3":
+                    scene = "scene_4"
+                    if stage_buttons[2]["clear"] == True:
+                        reset_outstage2()
+                    elif stage_buttons[2]["clear"] == False:
                         reset_instage2()
             else:
                 stage_message_active = True
@@ -357,6 +366,7 @@ def draw_game_scene():
     elif scene == "scene_6":
         for block in scene_6_ground_blocks:
             screen.blit(ground_image, block.topleft)
+            screen.blit(finish_image, scene_6_finish_rect.topleft)
 
     if triangle_falling:
         triangle_points = [
@@ -398,17 +408,28 @@ def check_finish():
     if scene == "scene_3" and tino_rect.colliderect(scene_3_finish_rect):
         message_active = True
 
+    if scene == "scene_6" and tino_rect.colliderect(scene_6_finish_rect):
+        message_active = True
+
     keys = pygame.key.get_pressed()
     if message_active and keys[pygame.K_RETURN]:
         if scene == "scene_3":
             stage_buttons[0]["clear"] = True  
             stage_buttons[1]["enabled"] = True 
-        scene = "stage" 
+
+        if scene == "scene_6":
+            stage_buttons[1]["clear"] = True  
+            stage_buttons[2]["enabled"] = True  
+
+        scene = "stage"  
         message_active = False
         player_lives = 4
 
 def handle_keys():
     global tino_x, tino_y, tino_velocity_y, on_ground, facing_left, moving
+    if message_active:  
+        return
+
     keys = pygame.key.get_pressed()
     moving = False
     if keys[pygame.K_a]:
@@ -564,6 +585,7 @@ while running:
          tino_y = -100 
          tino_velocity_y = 0
         draw_game_scene()
+        check_finish()
 
     pygame.display.flip()
 
