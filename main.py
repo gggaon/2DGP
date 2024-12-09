@@ -7,6 +7,7 @@ menu_music = "main.mp3"
 stage1_music = "stage_1.mp3"
 stage2_music = "stage_2.mp3"
 stage3_music = "stage_3.mp3"
+bounce_sound = pygame.mixer.Sound("bounce.mp3")
 
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("TinoVenture")
@@ -525,6 +526,8 @@ def handle_keys():
         tino_velocity_y = jump_strength
         on_ground = False
         moving = True
+        
+        bounce_sound.play()
 
 def handle_collisions():
     global tino_y, tino_velocity_y, on_ground, scene, tino_x, transparent_block_visible
