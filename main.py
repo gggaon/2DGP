@@ -8,6 +8,7 @@ stage1_music = "stage_1.mp3"
 stage2_music = "stage_2.mp3"
 stage3_music = "stage_3.mp3"
 bounce_sound = pygame.mixer.Sound("bounce.mp3")
+bounce_sound.set_volume(0.1)
 
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption("TinoVenture")
@@ -178,7 +179,16 @@ font = pygame.font.SysFont("Arial", 24)
 def play_music(file, loop=-1):
     pygame.mixer.music.stop()  
     pygame.mixer.music.load(file)
-    pygame.mixer.music.play(loop) 
+    pygame.mixer.music.play(loop)
+
+    if file == "stage_1.mp3":
+        pygame.mixer.music.set_volume(0.4)  
+    elif file == "stage_2.mp3":
+        pygame.mixer.music.set_volume(0.4)  
+    elif file == "stage_3.mp3":
+        pygame.mixer.music.set_volume(0.2) 
+    elif file == "main.mp3":
+        pygame.mixer.music.set_volume(1.0)
 
 def draw_stage():
     screen.blit(stage_background_image, (0, 0))
