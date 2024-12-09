@@ -58,6 +58,11 @@ monster_image = pygame.image.load('mush.png').convert()
 monster_image.set_colorkey((0, 0, 0))  
 monster_image = pygame.transform.scale(monster_image, (50, 50))
 
+slider_knob_image = pygame.image.load("mario.png").convert()
+slider_knob_image.set_colorkey((0, 0, 0)) 
+slider_knob_image = pygame.transform.scale(slider_knob_image, (40, 40))
+slider_knob_image_flipped = pygame.transform.flip(slider_knob_image, True, False)
+
 ground_y_position = 500
 
 scene_1_ground_blocks = [
@@ -104,6 +109,9 @@ scene_9_ground_blocks = [
     pygame.Rect(x, ground_y_position, ground_width, ground_height)
     for x in range(0, 800, ground_width) 
 ]
+
+continue_button_rect = pygame.Rect(300, 200, 200, 50)
+volume_slider_rect = pygame.Rect(300, 300, 200, 10)
 
 scene_1_block1_rect = pygame.Rect(200, ground_y_position - ground_height - 70, ground_width, ground_height)
 scene_1_block2_rect = pygame.Rect(500, ground_y_position - ground_height - 70, ground_width, ground_height)
@@ -163,6 +171,8 @@ monster_x = 200
 monster_y = ground_y_position - 50
 monster_speed = 0.1
 monster_direction = 1
+paused = False
+volume_level = 0.5
 font = pygame.font.SysFont("Arial", 24) 
 
 def play_music(file, loop=-1):
@@ -199,6 +209,27 @@ def draw_stage():
 
     if stage_message_active:
         draw_message_box("This stage is locked!")
+
+def draw_settings():
+    screen.fill((50, 50, 50))
+    
+    title_font = pygame.font.SysFont("Arial", 48)
+    title_text = title_font.render("SETTING", True, (255, 255, 255))
+    screen.blit(title_text, ((800 - title_text.get_width()) // 2, 100))
+
+    pygame.draw.rect(screen, (0, 255, 0), continue_button_rect, border_radius=10)
+    continue_text = button_font.render("CONTINUE", True, (0, 0, 0))
+    screen.blit(continue_text, (continue_button_rect.x + 55, continue_button_rect.y + 10))
+
+    pygame.draw.rect(screen, (200, 200, 200), volume_slider_rect)
+
+    slider_knob_x = volume_slider_rect.x + int(volume_level * volume_slider_rect.width)
+    slider_knob_y = volume_slider_rect.y - 30
+
+    screen.blit(slider_knob_image_flipped, (slider_knob_x - 20, slider_knob_y))
+
+    volume_label = button_font.render(f"VOLUME: {int(volume_level * 100)}%", True, (255, 255, 255))
+    screen.blit(volume_label, (345, 350))
 
 def handle_stage_click(pos):
     global scene, stage_message_active
@@ -569,7 +600,7 @@ def handle_collisions():
             on_ground = True
             return
 
-    if scene in ["scene_3", "scene_6"]:
+    if scene in ["scene_3", "scene_6", "scene_9"]:
         tino_x = min(tino_x, 800 - 50)
     if tino_x > 800:
         if scene == "scene_1":
@@ -622,76 +653,100 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        elif scene == "main_menu" and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            scene = "stage"
-        elif scene == "stage" and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            handle_stage_click(event.pos)
-        elif scene == "stage" and event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
-            handle_stage_click(event.pos)
-        elif stage_message_active and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            stage_message_active = False
+        
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                paused = not paused
+        
+        if paused:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
 
-    if scene in ["main_menu", "stage"]:
-        if current_music != menu_music:
-            play_music(menu_music)
-            current_music = menu_music
-    elif scene in ["scene_1", "scene_2", "scene_3"]:
-        if current_music != stage1_music:
-            play_music(stage1_music)
-            current_music = stage1_music
-    elif scene in ["scene_4", "scene_5", "scene_6"]:
-        if current_music != stage2_music:
-            play_music(stage2_music)
-            current_music = stage2_music
-    elif scene in ["scene_7", "scene_8", "scene_9"]:
-        if current_music != stage3_music:
-            play_music(stage3_music)
-            current_music = stage3_music
+                if continue_button_rect.collidepoint(mouse_pos):
+                    paused = False
 
-    if scene == "main_menu":
-        draw_lobby()
-    elif scene == "stage":
-        draw_stage()
-    elif scene in ["scene_1", "scene_2", "scene_3"]:
-        if not message_active:  
-            handle_keys()
-            tino_velocity_y += gravity
-            tino_y += tino_velocity_y
-            handle_collisions()
-            check_falling_into_hole()
-            handle_triangle()
+            elif event.type == pygame.MOUSEMOTION:
+                if pygame.mouse.get_pressed()[0]:  
+                    if volume_slider_rect.collidepoint(event.pos):
+                        volume_level = (event.pos[0] - volume_slider_rect.x) / volume_slider_rect.width
+                        volume_level = max(0, min(1, volume_level))
+                        pygame.mixer.music.set_volume(volume_level)
 
-            if scene == "scene_2":  
-                update_scene_2_block1()
-                update_monster()
-        check_finish()  
-        draw_game_scene()
-    elif scene in ["scene_4", "scene_5"]:
-        handle_keys()
-        tino_velocity_y += gravity
-        tino_y += tino_velocity_y
-        handle_collisions()
-        check_falling_into_hole()
-        draw_game_scene()
-    elif scene == "scene_6":
-        handle_keys()
-        tino_velocity_y += gravity
-        tino_y += tino_velocity_y
-        handle_collisions()
-        if tino_y > 1000:  
-         tino_y = -100 
-         tino_velocity_y = 0
-        draw_game_scene()
-        check_finish()
-    elif scene in ["scene_7", "scene_8", "scene_9"]:
-        if not message_active:  
-            handle_keys()
-            tino_velocity_y += gravity
-            tino_y += tino_velocity_y
-            handle_collisions()
-            check_falling_into_hole()
+        if not paused:
+            if scene == "main_menu" and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                scene = "stage"
+            elif scene == "stage" and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                handle_stage_click(event.pos)
+            elif scene == "stage" and event.type == pygame.MOUSEBUTTONDOWN and event.button == 2:
+                handle_stage_click(event.pos)
+            elif stage_message_active and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                stage_message_active = False
+
+    if not paused:
+        if scene in ["main_menu", "stage"]:
+            if current_music != menu_music:
+                play_music(menu_music)
+                current_music = menu_music
+        elif scene in ["scene_1", "scene_2", "scene_3"]:
+            if current_music != stage1_music:
+                play_music(stage1_music)
+                current_music = stage1_music
+        elif scene in ["scene_4", "scene_5", "scene_6"]:
+            if current_music != stage2_music:
+                play_music(stage2_music)
+                current_music = stage2_music
+        elif scene in ["scene_7", "scene_8", "scene_9"]:
+            if current_music != stage3_music:
+                play_music(stage3_music)
+                current_music = stage3_music
+
+    if paused:
+        draw_settings()
+    else:
+        if scene == "main_menu":
+            draw_lobby()
+        elif scene == "stage":
+            draw_stage()
+        elif scene in ["scene_1", "scene_2", "scene_3"]:
+            if not message_active:  
+                handle_keys()
+                tino_velocity_y += gravity
+                tino_y += tino_velocity_y
+                handle_collisions()
+                check_falling_into_hole()
+                handle_triangle()
+
+                if scene == "scene_2":  
+                    update_scene_2_block1()
+                    update_monster()
             check_finish()  
             draw_game_scene()
+        elif scene in ["scene_4", "scene_5"]:
+            handle_keys()
+            tino_velocity_y += gravity
+            tino_y += tino_velocity_y
+            handle_collisions()
+            check_falling_into_hole()
+            draw_game_scene()
+        elif scene == "scene_6":
+            handle_keys()
+            tino_velocity_y += gravity
+            tino_y += tino_velocity_y
+            handle_collisions()
+            if tino_y > 1000:  
+                tino_y = -100 
+                tino_velocity_y = 0
+            draw_game_scene()
+            check_finish()
+        elif scene in ["scene_7", "scene_8", "scene_9"]:
+            if not message_active:  
+                handle_keys()
+                tino_velocity_y += gravity
+                tino_y += tino_velocity_y
+                handle_collisions()
+                check_falling_into_hole()
+                check_finish()  
+                draw_game_scene()
 
     pygame.display.flip()
 
