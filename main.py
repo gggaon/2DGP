@@ -681,6 +681,7 @@ while running:
                         volume_level = (event.pos[0] - volume_slider_rect.x) / volume_slider_rect.width
                         volume_level = max(0, min(1, volume_level))
                         pygame.mixer.music.set_volume(volume_level)
+                        bounce_sound.set_volume(volume_level)
 
         if not paused:
             if scene == "main_menu" and event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
