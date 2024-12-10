@@ -139,6 +139,11 @@ scene_4_block1_rect = pygame.Rect(400, ground_y_position - ground_height - 70, g
 
 scene_5_block1_rect = pygame.Rect(300, ground_y_position - ground_height - 70, ground_width, ground_height)
 
+scene_5_monster_x = scene_5_block1_rect.x
+scene_5_monster_y = scene_5_block1_rect.y - 50
+scene_5_monster_speed = 0.1
+scene_5_monster_direction = 1
+
 scene_8_block1_rect = pygame.Rect(100, ground_y_position - ground_height - 70, 50, ground_height)
 scene_8_block2_rect = pygame.Rect(250, ground_y_position - ground_height - 70, 50, ground_height)
 scene_8_block3_rect = pygame.Rect(400, ground_y_position - ground_height - 70, 50, ground_height)
@@ -268,7 +273,7 @@ def handle_stage_click(pos):
                 stage_message_active = True
 
 def reset_instage1():
-    global tino_x, tino_y, tino_velocity_y, triangle_falling, triangle_x, triangle_y,scene_2_block1_falling, scene_2_block1_rect, transparent_block_visible, player_lives, on_ground, facing_left, player_lives
+    global tino_x, tino_y, tino_velocity_y, triangle_falling, triangle_x, triangle_y,scene_2_block1_falling, scene_2_block1_rect, transparent_block_visible, player_lives, on_ground, facing_left, player_lives, scene
     tino_x, tino_y = 50, ground_y_position - 50  
     tino_velocity_y = 0
     triangle_falling = False
@@ -283,7 +288,7 @@ def reset_instage1():
     scene = "scene_1"
 
 def reset_outstage1():
-    global tino_x, tino_y, tino_velocity_y, triangle_falling, triangle_x, triangle_y,scene_2_block1_falling, scene_2_block1_rect, transparent_block_visible, player_lives, on_ground, facing_left, player_lives
+    global tino_x, tino_y, tino_velocity_y, triangle_falling, triangle_x, triangle_y,scene_2_block1_falling, scene_2_block1_rect, transparent_block_visible, player_lives, on_ground, facing_left, player_lives, scene
     tino_x, tino_y = 50, ground_y_position - 50  
     tino_velocity_y = 0
     triangle_falling = False
@@ -298,25 +303,27 @@ def reset_outstage1():
     scene = "scene_1"
 
 def reset_instage2():
-    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives
+    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives, scene
     tino_x, tino_y = 50, ground_y_position - 50  
     tino_velocity_y = 0
     on_ground = True  
     facing_left = False
     player_lives -= 1
+    scene_4_finish_rect.y = ground_y_position - ground_height - 220
     scene = "scene_4"
 
 def reset_outstage2():
-    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives
+    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives, scene
     tino_x, tino_y = 50, ground_y_position - 50  
     tino_velocity_y = 0
     on_ground = True  
     facing_left = False
     player_lives = 3
+    scene_4_finish_rect.y = ground_y_position - ground_height - 220
     scene = "scene_4"
 
 def reset_instage3():
-    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives
+    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives, scene
     tino_x, tino_y = 50, ground_y_position - 50  
     tino_velocity_y = 0
     on_ground = True  
@@ -325,7 +332,7 @@ def reset_instage3():
     scene = "scene_7"
 
 def reset_outstage3():
-    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives
+    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives, scene
     tino_x, tino_y = 50, ground_y_position - 50  
     tino_velocity_y = 0
     on_ground = True  
@@ -516,6 +523,23 @@ def update_monster():
     if tino_rect.colliderect(monster_rect):
         scene = "scene_1"
         reset_instage1()
+
+def update_monster_in_scene_5():
+    global scene_5_monster_x, scene_5_monster_direction, tino_x, tino_y, scene
+
+    scene_5_monster_x += scene_5_monster_speed * scene_5_monster_direction
+
+    if scene_5_monster_x <= scene_5_block1_rect.x or scene_5_monster_x >= scene_5_block1_rect.x + ground_width - 50:
+        scene_5_monster_direction *= -1
+
+    tino_rect = pygame.Rect(tino_x, tino_y, 50, 50)
+    monster_rect = pygame.Rect(scene_5_monster_x, scene_5_monster_y, 50, 50)
+
+    if tino_rect.colliderect(monster_rect):
+        reset_instage2()
+
+def draw_monster_in_scene_5():
+    screen.blit(monster_image, (scene_5_monster_x, scene_5_monster_y))
 
 def check_finish():
     global scene, message_active, stage_buttons, player_lives
@@ -732,13 +756,22 @@ while running:
                     update_monster()
             check_finish()  
             draw_game_scene()
-        elif scene in ["scene_4", "scene_5"]:
+        elif scene == "scene_4":
             handle_keys()
             tino_velocity_y += gravity
             tino_y += tino_velocity_y
             handle_collisions()
             check_falling_into_hole()
             draw_game_scene()
+        elif scene == "scene_5":
+            handle_keys()
+            tino_velocity_y += gravity
+            tino_y += tino_velocity_y
+            handle_collisions()
+            check_falling_into_hole()
+            update_monster_in_scene_5()
+            draw_game_scene()
+            draw_monster_in_scene_5()
         elif scene == "scene_6":
             handle_keys()
             tino_velocity_y += gravity
