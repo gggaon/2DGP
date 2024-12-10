@@ -225,6 +225,24 @@ def draw_stage():
     if stage_message_active:
         draw_message_box("This stage is locked!")
 
+def draw_loading_screen(message, duration=2000):
+    start_time = pygame.time.get_ticks()
+    while pygame.time.get_ticks() - start_time < duration:
+        screen.fill((0, 0, 0))
+
+        loading_font = pygame.font.SysFont("Arial", 36, bold=True)
+        message_text = loading_font.render(message, True, (255, 255, 255))
+        screen.blit(message_text, ((800 - message_text.get_width()) // 2, 250))
+
+        elapsed_time = pygame.time.get_ticks() - start_time
+        progress = min(1.0, elapsed_time / duration)
+
+        mario_x = 200 + int(400 * progress)
+        screen.blit(tino_image_flipped, (mario_x, 400))
+        screen.blit(finish_image, (600, 350))
+
+        pygame.display.flip()
+
 def draw_settings():
     screen.fill((50, 50, 50))
     
@@ -252,22 +270,27 @@ def handle_stage_click(pos):
         if button["rect"].collidepoint(pos):
             if button["enabled"]:
                 if button["label"] == "1":
+                    draw_loading_screen("Loading Stage 1...")
                     scene = "scene_1"
-                    if stage_buttons[0]["clear"] == True:
+                    if stage_buttons[0]["clear"]:
                         reset_outstage1()
-                    elif stage_buttons[0]["clear"] == False:
+                    else:
                         reset_instage1()
+
                 elif button["label"] == "2":
+                    draw_loading_screen("Loading Stage 2...")
                     scene = "scene_4"
-                    if stage_buttons[1]["clear"] == True:
+                    if stage_buttons[1]["clear"]:
                         reset_outstage2()
-                    elif stage_buttons[1]["clear"] == False:
+                    else:
                         reset_instage2()
+
                 elif button["label"] == "3":
+                    draw_loading_screen("Loading Stage 3...")
                     scene = "scene_7"
-                    if stage_buttons[2]["clear"] == True:
+                    if stage_buttons[2]["clear"]:
                         reset_outstage3()
-                    elif stage_buttons[2]["clear"] == False:
+                    else:
                         reset_instage3()
             else:
                 stage_message_active = True
