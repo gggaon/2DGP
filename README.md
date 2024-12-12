@@ -76,7 +76,7 @@ Pygame 장단점(11월 9일 추가)
 4. 일정 (1차 발표 전까지 수정 가능)
    -
    - ~ 10월 27일 : 1차 발표를 위한 README.md 작성 및 자료조사 
-   - 10월 28일 : 1차 발표 (유튜브 링크 : https://www.youtube.com/watch?v=tm51O1R8cmA&t=8s)
+   - 10월 28일 : 1차 발표
    - 10월 29일 ~ 11월 4일 : 게임의 기본적인 틀 제작
    - 11월 5일 ~ 11월 11일 : 각 Scene의 class 정의(Player, Enemy 등 GameObject 생성)
    - 11월 12일 ~ 11월 18일 : 각 class 구체화 및 함정 구현
