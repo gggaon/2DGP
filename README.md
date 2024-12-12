@@ -194,7 +194,7 @@ Pygame 장단점(11월 9일 추가)
 #기타
 1차발표 유튜브 링크: https://www.youtube.com/watch?v=tm51O1R8cmA&t=8s
 2차발표 유튜브 링크: https://www.youtube.com/watch?v=3qXo3a2Pzwk&t=1s
-3차발표 유튜브 링크: 
+3차발표 유튜브 링크: https://www.youtube.com/watch?v=Oz8ey8hDgDE
 
 고양이 마리오 BGM 유튜브 사이트
 https://www.youtube.com/playlist?list=PLOIlehl1iAoVCYB3dZ9Q6hybotCJC4Hnz
