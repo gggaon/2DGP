@@ -94,72 +94,83 @@ Pygame 장단점(11월 9일 추가)
 (12월 12일 추가)
 
 5. 사용된 기술:
-    1. Pygame 초기화 및 설정
-          pygame.init(), pygame.mixer.init() : Pygame과 오디오 시스템 초기화
-          pygame.display.set_mode((800, 600)) : 창 크기 설정
-          pygame.display.set_caption("TinoVenture") : 창 제목 설정
-    2. 오디오 관리
-                  pygame.mixer.Sound("bounce.mp3") : 효과음 로딩 및 볼륨 설정
-                  pygame.mixer.music.load() : 배경 음악 로딩
-                  pygame.mixer.music.play() : 배경 음악 재생 및 볼륨 조절
-3. 이미지 로딩 및 변환
-pygame.image.load() : 이미지 파일 로딩
-.convert() 및 .convert_alpha() : 이미지 최적화 및 투명도 지원
-pygame.transform.scale() : 이미지 크기 조정
-pygame.transform.flip() : 이미지 뒤집기
-4. 게임 오브젝트 관리
-오브젝트 위치와 충돌 감지:
-pygame.Rect() : 직사각형 오브젝트 생성
-.colliderect() : 충돌 감지
-.subsurface() : 특정 이미지 영역 자르기
-5. 키 입력 처리
-pygame.key.get_pressed() : 키보드 입력 확인
-pygame.KEYDOWN, pygame.K_a, pygame.K_d, pygame.K_RETURN 등 : 특정 키 입력 이벤트 처리
-6. 마우스 입력 처리
-pygame.MOUSEBUTTONDOWN : 마우스 버튼 클릭 감지
-pygame.MOUSEMOTION : 마우스 이동 감지
-pygame.mouse.get_pos() : 마우스 위치 확인
-7. 물리 및 충돌 처리
-중력과 점프:
-중력(gravity), 속도(velocity_y)를 사용해 물리적 움직임 구현
-바닥과 충돌 시 위치 재설정 및 점프력 적용
-장애물 충돌 및 낙사 감지:
-바닥 블록과 충돌 감지 (check_falling_into_hole())
-장애물 충돌로 위치 초기화
-8. 게임 씬 및 상태 관리
-씬 전환:
-scene = "stage" : 씬 이름 기반 전환
-stage_buttons 및 stage_message_active : 스테이지 상태 관리
-게임 초기화 및 재설정 함수들:
-reset_instage1(), reset_outstage1() 등 스테이지 초기화
-9. 렌더링 및 UI 그리기
-텍스트 렌더링:
-pygame.font.SysFont() : 폰트 생성
-.render() : 텍스트 이미지 생성
-메시지 박스:
-draw_message_box() : 메시지 박스 출력
-draw_stage(), draw_game_scene() : 스테이지와 오브젝트 출력
-10. 게임 루프 관리
-게임 루프 및 종료 조건:
-while running: : 게임 루프 실행
-pygame.event.get() : 이벤트 수집
-pygame.display.flip() : 화면 업데이트
-pygame.quit() : 게임 종료 처리
-11. 추가 기능들
-볼륨 조절: 슬라이더로 음악 및 효과음 볼륨 조절
-몬스터 이동: 몬스터 패턴 이동 및 충돌 감지
-보스 전투: 보스와 충돌 시 보스 변형 (flatten_boss())
-   참고한 것들
-   수업내용에서 차용한 것
-   직접 개발한 것
+   1. Pygame 초기화 및 설정
+         -pygame.init(), pygame.mixer.init() : Pygame과 오디오 시스템 초기화
+         -pygame.display.set_mode((800, 600)) : 창 크기 설정
+         -pygame.display.set_caption("TinoVenture") : 창 제목 설정
+   2. 오디오 관리
+         -pygame.mixer.Sound("bounce.mp3") : 효과음 로딩 및 볼륨 설정
+         -pygame.mixer.music.load() : 배경 음악 로딩
+         -pygame.mixer.music.play() : 배경 음악 재생 및 볼륨 조절
+   3. 이미지 로딩 및 변환
+         -pygame.image.load() : 이미지 파일 로딩
+         -.convert() 및 .convert_alpha() : 이미지 최적화 및 투명도 지원
+         -pygame.transform.scale() : 이미지 크기 조정
+         -pygame.transform.flip() : 이미지 뒤집기
+   4. 게임 오브젝트 관리
+         -오브젝트 위치와 충돌 감지:
+            -pygame.Rect() : 직사각형 오브젝트 생성
+            -.colliderect() : 충돌 감지
+            -.subsurface() : 특정 이미지 영역 자르기
+   5. 키 입력 처리
+         -pygame.key.get_pressed() : 키보드 입력 확인
+         -pygame.KEYDOWN, pygame.K_a, pygame.K_d, pygame.K_RETURN 등 : 특정 키 입력 이벤트 처리
+   6. 마우스 입력 처리
+         -pygame.MOUSEBUTTONDOWN : 마우스 버튼 클릭 감지
+         -pygame.MOUSEMOTION : 마우스 이동 감지
+         -pygame.mouse.get_pos() : 마우스 위치 확인
+   7. 물리 및 충돌 처리
+         -중력과 점프:
+            -중력(gravity), 속도(velocity_y)를 사용해 물리적 움직임 구현
+            -바닥과 충돌 시 위치 재설정 및 점프력 적용
+         -장애물 충돌 및 낙사 감지:
+            -바닥 블록과 충돌 감지 (check_falling_into_hole())
+            -장애물 충돌로 위치 초기화
+   8. 게임 씬 및 상태 관리
+         -씬 전환:
+            -scene = "stage" : 씬 이름 기반 전환
+            -stage_buttons 및 stage_message_active : 스테이지 상태 관리
+         -게임 초기화 및 재설정 함수들:
+            -reset_instage1(), reset_outstage1() 등 스테이지 초기화
+   9. 렌더링 및 UI 그리기
+         -텍스트 렌더링:
+            -pygame.font.SysFont() : 폰트 생성
+            -.render() : 텍스트 이미지 생성
+         -메시지 박스:
+            -draw_message_box() : 메시지 박스 출력
+            -draw_stage(), draw_game_scene() : 스테이지와 오브젝트 출력
+   10. 게임 루프 관리
+         -게임 루프 및 종료 조건:
+            -while running: : 게임 루프 실행
+            -pygame.event.get() : 이벤트 수집
+            -pygame.display.flip() : 화면 업데이트
+            -pygame.quit() : 게임 종료 처리
+   11. 추가 기능들
+         -볼륨 조절: 슬라이더로 음악 및 효과음 볼륨 조절
+         -몬스터 이동: 몬스터 패턴 이동 및 충돌 감지
+         -보스 전투: 보스와 충돌 시 보스 변형 (flatten_boss())
+6. 참고한 것들
+   - 강의자료들
+7. 수업내용에서 차용한 것
+   - 파이썬 기초
+   - 2D 렌더링
+   - 애니메이션
+   - 입력처리
+   - 직선이동
+   - 게임오브젝트
+   - 캐릭터컨트롤러
+   - 충돌처리
+   - 사운드
+9. 직접 개발한 것
+   - 
 
-6. 구현하면서 어려운 부분, 수업에서 추가로 다루었으면 하는 부분에 대한 언급
+11. 구현하면서 어려운 부분, 수업에서 추가로 다루었으면 하는 부분에 대한 언급
    하고 싶었지만 못 한 것들
    (앱을 스토어에 판다면) 팔기 위해 보충할 것들
    결국 해결하지 못한 문제/버그
    기말 프로젝트를 하면서 겪은 어려움에 대해 소개해도 좋다
   
-7. 수업 진행 방식에 대한 제안
+12. 수업 진행 방식에 대한 제안
    이번 수업에서 기대한 것, 얻은 것, 얻지 못한 것
    더 좋은 수업이 되기 위해 변화할 점
 
