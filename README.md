@@ -95,6 +95,7 @@ Pygame 장단점(11월 9일 추가)
 ![image](https://github.com/user-attachments/assets/7e16b2e7-4dad-417b-a1c6-3b49b3bb20ae)
 ![image](https://github.com/user-attachments/assets/6391bb68-ce94-424d-b21e-fd8836e14c74)
 <img width="123" alt="image" src="https://github.com/user-attachments/assets/1d4677bf-a6af-43bf-b274-597d3da70dde" />
+![image](https://github.com/user-attachments/assets/a92aea62-1a18-46ec-85cf-a8cb8a31b26e)
 (12월 12일 추가)
 
 5. 사용된 기술:
