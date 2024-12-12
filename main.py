@@ -66,6 +66,12 @@ slider_knob_image_flipped = pygame.transform.flip(slider_knob_image, True, False
 
 ground_y_position = 500
 
+boss_image = pygame.image.load('boss.png').convert()
+boss_image.set_colorkey((0, 0, 0))
+boss_image = pygame.transform.scale(boss_image, (300, 300))
+boss_rect = boss_image.get_rect()
+boss_rect.topleft = (500, ground_y_position - 300) 
+
 scene_1_ground_blocks = [
     pygame.Rect(x, ground_y_position, ground_width, ground_height)
     for x in range(0, 800, ground_width) if not (500 <= x < 700)
@@ -144,14 +150,13 @@ scene_5_monster_y = scene_5_block1_rect.y - 50
 scene_5_monster_speed = 0.1
 scene_5_monster_direction = 1
 
-scene_8_block1_rect = pygame.Rect(100, ground_y_position - ground_height - 70, 50, ground_height)
 scene_8_block2_rect = pygame.Rect(250, ground_y_position - ground_height - 70, 50, ground_height)
 scene_8_block3_rect = pygame.Rect(400, ground_y_position - ground_height - 70, 50, ground_height)
 
 stage_buttons = [
     {"label": "1", "rect": pygame.Rect(250, 200, 100, 50), "enabled": True, "clear": False},
     {"label": "2", "rect": pygame.Rect(350, 200, 100, 50), "enabled": False, "clear": False},
-    {"label": "3", "rect": pygame.Rect(450, 200, 100, 50), "enabled": False, "clear": False},
+    {"label": "3", "rect": pygame.Rect(450, 200, 100, 50), "enabled": True, "clear": False},
 ]
 button_font = pygame.font.SysFont("Arial", 24)
 stage_message_active = False
@@ -404,7 +409,7 @@ def check_falling_into_hole():
             if tino_rect.colliderect(block):
                 is_in_hole = False
                 break
-        if tino_rect.colliderect(scene_8_block1_rect) or tino_rect.colliderect(scene_8_block2_rect) or tino_rect.colliderect(scene_8_block3_rect):
+        if tino_rect.colliderect(scene_8_block2_rect) or tino_rect.colliderect(scene_8_block3_rect):
             is_in_hole = False
 
     if is_in_hole and tino_y > ground_y_position:
@@ -507,10 +512,10 @@ def draw_game_scene():
         for block in scene_8_ground_blocks:
             screen.blit(ground_image, block.topleft)
 
-        screen.blit(scene_8_block1_image, scene_8_block1_rect.topleft)
         screen.blit(scene_8_block1_image, scene_8_block2_rect.topleft)
         screen.blit(scene_8_block1_image, scene_8_block3_rect.topleft)
     elif scene == "scene_9":
+        screen.blit(boss_image, boss_rect.topleft)
         for block in scene_9_ground_blocks:
             screen.blit(ground_image, block.topleft)
 
@@ -563,6 +568,12 @@ def update_monster_in_scene_5():
 
 def draw_monster_in_scene_5():
     screen.blit(monster_image, (scene_5_monster_x, scene_5_monster_y))
+
+def check_boss_collision():
+    global scene
+    tino_rect = pygame.Rect(tino_x, tino_y, 50, 50)
+    if tino_rect.colliderect(boss_rect):
+        reset_instage3()
 
 def check_finish():
     global scene, message_active, stage_buttons, player_lives
@@ -646,7 +657,7 @@ def handle_collisions():
     elif scene == "scene_7":
         blocks = scene_7_ground_blocks
     elif scene == "scene_8":
-        blocks = scene_8_ground_blocks + [scene_8_block1_rect] + [scene_8_block2_rect] + [scene_8_block3_rect]
+        blocks = scene_8_ground_blocks + [scene_8_block2_rect] + [scene_8_block3_rect]
     elif scene == "scene_9":
         blocks = scene_9_ground_blocks
 
@@ -805,7 +816,7 @@ while running:
                 tino_velocity_y = 0
             draw_game_scene()
             check_finish()
-        elif scene in ["scene_7", "scene_8", "scene_9"]:
+        elif scene in ["scene_7", "scene_8"]:
             if not message_active:  
                 handle_keys()
                 tino_velocity_y += gravity
@@ -814,6 +825,15 @@ while running:
                 check_falling_into_hole()
                 check_finish()  
                 draw_game_scene()
+        elif scene == "scene_9":
+            handle_keys()
+            tino_velocity_y += gravity
+            tino_y += tino_velocity_y
+            handle_collisions()
+            check_falling_into_hole()
+            check_boss_collision()
+            check_finish()
+            draw_game_scene()
 
     pygame.display.flip()
 
