@@ -146,6 +146,9 @@ scene_4_finish_rect.topleft = (430, ground_y_position - ground_height - 220)
 scene_6_finish_rect = finish_image.get_rect()
 scene_6_finish_rect.topleft = (600, ground_y_position - 150)
 
+scene_9_finish_rect = finish_image.get_rect()
+scene_9_finish_rect.topleft = (400, ground_y_position - 150)
+
 scene_4_block1_rect = pygame.Rect(400, ground_y_position - ground_height - 70, ground_width, ground_height)
 
 scene_5_block1_rect = pygame.Rect(300, ground_y_position - ground_height - 70, ground_width, ground_height)
@@ -161,7 +164,7 @@ scene_8_block3_rect = pygame.Rect(400, ground_y_position - ground_height - 70, 5
 stage_buttons = [
     {"label": "1", "rect": pygame.Rect(250, 200, 100, 50), "enabled": True, "clear": False},
     {"label": "2", "rect": pygame.Rect(350, 200, 100, 50), "enabled": False, "clear": False},
-    {"label": "3", "rect": pygame.Rect(450, 200, 100, 50), "enabled": True, "clear": False},
+    {"label": "3", "rect": pygame.Rect(450, 200, 100, 50), "enabled": False, "clear": False},
 ]
 button_font = pygame.font.SysFont("Arial", 24)
 stage_message_active = False
@@ -188,6 +191,7 @@ monster_y = ground_y_position - 50
 monster_speed = 0.1
 monster_direction = 1
 paused = False
+boss_flattened = False
 volume_level = 0.5
 font = pygame.font.SysFont("Arial", 24) 
 
@@ -520,7 +524,6 @@ def draw_game_scene():
     elif scene == "scene_8":
         for block in scene_8_ground_blocks:
             screen.blit(ground_image, block.topleft)
-
         screen.blit(scene_8_block1_image, scene_8_block2_rect.topleft)
         screen.blit(scene_8_block1_image, scene_8_block3_rect.topleft)
     elif scene == "scene_9":
@@ -531,6 +534,8 @@ def draw_game_scene():
             screen.blit(ground_image, scene_9_transparent_block1_rect.topleft)
         if scene_9_transparent_block2_visible:
             screen.blit(ground_image, scene_9_transparent_block2_rect.topleft)
+        if boss_flattened:
+             screen.blit(finish_image, scene_9_finish_rect.topleft)
 
     if triangle_falling:
         triangle_points = [
@@ -593,10 +598,13 @@ def check_boss_collision():
             reset_instage3()
 
 def flatten_boss():
-    global boss_image, boss_rect
+    global boss_image, boss_rect, scene_9_finish_rect, boss_flattened
     boss_image = pygame.transform.scale(boss_image, (300, 50)) 
     boss_rect.height = 50
     boss_rect.y += 250
+    boss_flattened = True
+    scene_9_finish_rect = finish_image.get_rect()
+    scene_9_finish_rect.topleft = (400, ground_y_position - 150)
 
 def check_finish():
     global scene, message_active, stage_buttons, player_lives
@@ -608,8 +616,8 @@ def check_finish():
     if scene == "scene_6" and tino_rect.colliderect(scene_6_finish_rect):
         message_active = True
 
-    #if scene == "scene_9" and tino_rect.colliderect(scene_9_finish_rect):
-    #    message_active = True
+    if scene == "scene_9" and boss_flattened and tino_rect.colliderect(scene_9_finish_rect):
+        message_active = True
 
     keys = pygame.key.get_pressed()
     if message_active and keys[pygame.K_RETURN]:
