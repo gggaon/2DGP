@@ -132,6 +132,11 @@ scene_2_block1_velocity_y = 0.5
 transparent_block_rect = pygame.Rect(700, 350, ground_width, ground_height)
 transparent_block_visible = False 
 
+scene_9_transparent_block1_rect = pygame.Rect(100, 350, ground_width, ground_height)
+scene_9_transparent_block1_visible = False
+scene_9_transparent_block2_rect = pygame.Rect(300, 200, ground_width, ground_height)
+scene_9_transparent_block2_visible = False
+
 scene_3_finish_rect = finish_image.get_rect()
 scene_3_finish_rect.topleft = (500, ground_y_position - 150)
 
@@ -351,20 +356,24 @@ def reset_outstage2():
     scene = "scene_4"
 
 def reset_instage3():
-    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives, scene
+    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives, scene, scene_9_transparent_block1_visible, scene_9_transparent_block2_visible
     tino_x, tino_y = 50, ground_y_position - 50  
     tino_velocity_y = 0
     on_ground = True  
     facing_left = False
+    scene_9_transparent_block1_visible = False
+    scene_9_transparent_block2_visible = False
     player_lives -= 1
     scene = "scene_7"
 
 def reset_outstage3():
-    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives, scene
+    global tino_x, tino_y, tino_velocity_y, player_lives, on_ground, facing_left, player_lives, scene, scene_9_transparent_block1_visible, scene_9_transparent_block2_visible
     tino_x, tino_y = 50, ground_y_position - 50  
     tino_velocity_y = 0
     on_ground = True  
     facing_left = False
+    scene_9_transparent_block1_visible = False
+    scene_9_transparent_block2_visible = False
     player_lives = 3
     scene = "scene_7"
 
@@ -518,6 +527,10 @@ def draw_game_scene():
         screen.blit(boss_image, boss_rect.topleft)
         for block in scene_9_ground_blocks:
             screen.blit(ground_image, block.topleft)
+        if scene_9_transparent_block1_visible:
+            screen.blit(ground_image, scene_9_transparent_block1_rect.topleft)
+        if scene_9_transparent_block2_visible:
+            screen.blit(ground_image, scene_9_transparent_block2_rect.topleft)
 
     if triangle_falling:
         triangle_points = [
@@ -570,10 +583,20 @@ def draw_monster_in_scene_5():
     screen.blit(monster_image, (scene_5_monster_x, scene_5_monster_y))
 
 def check_boss_collision():
-    global scene
+    global scene, boss_rect
     tino_rect = pygame.Rect(tino_x, tino_y, 50, 50)
+
     if tino_rect.colliderect(boss_rect):
-        reset_instage3()
+        if tino_rect.bottom <= boss_rect.top + 30:
+            flatten_boss()
+        else:
+            reset_instage3()
+
+def flatten_boss():
+    global boss_image, boss_rect
+    boss_image = pygame.transform.scale(boss_image, (300, 50)) 
+    boss_rect.height = 50
+    boss_rect.y += 250
 
 def check_finish():
     global scene, message_active, stage_buttons, player_lives
@@ -629,7 +652,7 @@ def handle_keys():
         bounce_sound.play()
 
 def handle_collisions():
-    global tino_y, tino_velocity_y, on_ground, scene, tino_x, transparent_block_visible
+    global tino_y, tino_velocity_y, on_ground, scene, tino_x, transparent_block_visible, scene_9_transparent_block1_visible, scene_9_transparent_block2_visible
     tino_rect = pygame.Rect(tino_x, tino_y, 50, 50)
 
     if scene == "scene_1":
@@ -660,6 +683,20 @@ def handle_collisions():
         blocks = scene_8_ground_blocks + [scene_8_block2_rect] + [scene_8_block3_rect]
     elif scene == "scene_9":
         blocks = scene_9_ground_blocks
+        if tino_rect.colliderect(scene_9_transparent_block1_rect):
+            if tino_velocity_y > 0:  
+                tino_y = scene_9_transparent_block1_rect.top - 50
+                tino_velocity_y = 0
+                on_ground = True
+                scene_9_transparent_block1_visible = True  
+                return
+        if tino_rect.colliderect(scene_9_transparent_block2_rect):
+            if tino_velocity_y > 0:  
+                tino_y = scene_9_transparent_block2_rect.top - 50
+                tino_velocity_y = 0
+                on_ground = True
+                scene_9_transparent_block2_visible = True  
+                return
 
     for block in blocks:
         if tino_rect.colliderect(block) and tino_velocity_y > 0:
