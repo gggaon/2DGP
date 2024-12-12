@@ -192,5 +192,9 @@ Pygame 장단점(11월 9일 추가)
     - 수업할 때 교수님 목소리를 더 잘 듣기 위해 매번 앞자리에 앉았었는데 뒷자리 사람들에게는 마이크로 소리가 전달되어 잘 듣지 못하고 놓치는 사람들이 있다고 들었다.
 
 #기타
+1차발표 유튜브 링크: https://www.youtube.com/watch?v=tm51O1R8cmA&t=8s
+2차발표 유튜브 링크: https://www.youtube.com/watch?v=3qXo3a2Pzwk&t=1s
+3차발표 유튜브 링크: 
+
 고양이 마리오 BGM 유튜브 사이트
 https://www.youtube.com/playlist?list=PLOIlehl1iAoVCYB3dZ9Q6hybotCJC4Hnz
